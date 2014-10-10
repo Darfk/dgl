@@ -1,5 +1,8 @@
 var Texture = function (src) {
   this.texture = gl.createTexture();
+  this.width = 0;
+  this.height = 0;
+
 }
 
 Texture.prototype.fromSrc = function (src) {
@@ -9,6 +12,7 @@ Texture.prototype.fromSrc = function (src) {
     loadedTexture(self.texture);
   };
   this.texture.image.src = src;
+  return this;
 };
 
 Texture.prototype.fromCanvas = function (cx) {
