@@ -32,11 +32,8 @@ Shader.prototype.fromSrc = function (vertexSrc, fragmentSrc, attributes, uniform
     gl.enableVertexAttribArray(this.attributes[attributes[i]]);
   }
 
-  console.log(this.program);
-
   for(var i in uniforms){
     this.uniforms[uniforms[i]] = gl.getUniformLocation(this.program, uniforms[i]);
-    console.log(this.uniforms[uniforms[i]], uniforms[i], i);
   }
   return this;
 };
