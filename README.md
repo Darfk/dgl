@@ -13,6 +13,7 @@ use of the wonderful [glMatrix](http://glmatrix.net/).
   normals. Currently only implements `v, vt, vn, f, o`
 - Utility data built in; diffuse and tilemap shaders, plane and cube
   mesh
+- Create textures from video, image and canvas with ease
 
 
 ## Motivation
