@@ -5,6 +5,9 @@ var Mesh = function () {
 };
 
 Mesh.prototype.fromVertexData = function(vertices, textureCoords, vertexIndices) {
+
+  console.info("fromVertexData", vertices.length, textureCoords.length, vertexIndices.length);
+
   gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexPositionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
@@ -39,14 +42,14 @@ Mesh.prototype.frontPlane = function(size) {
   ];
 
   var textureCoords = [
-    1.0, 1.0,
     0.0, 1.0,
-    0.0, 0.0,
+    1.0, 1.0,
     1.0, 0.0,
+    0.0, 0.0,
   ];
 
   var vertexIndices = [
-    0, 1, 2, 0, 2, 3, // Top face
+    0, 1, 2, 0, 2, 3,
   ];
 
   this.fromVertexData(vertices, textureCoords, vertexIndices);

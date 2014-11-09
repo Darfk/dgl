@@ -4,8 +4,10 @@ var Renderer = function () {
   this.currentModel = null;
   this.currentMesh = null;
 
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.SRC_COLOR, gl.ONE);
+  this.worldMatrix = null;
+  this.modelMatrix = null;
+
+  gl.enable(gl.CULL_FACE);
 };
 
 Renderer.prototype.begin = function () {
@@ -15,13 +17,13 @@ Renderer.prototype.begin = function () {
 
 Renderer.prototype.useMesh = function (mesh) {
   if(this.currentMesh === mesh) return;  
+  this.currentMesh = mesh;
   if(this.currentMaterial){
-    gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.vertexPositionBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexPositionBuffer);
     gl.vertexAttribPointer(this.currentMaterial.shader.attributes.aVertexPosition, mesh.vertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-    gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.vertexTexCoordBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexTexCoordBuffer);
     gl.vertexAttribPointer(this.currentMaterial.shader.attributes.aTextureCoord, mesh.vertexTexCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
   }
-  this.currentMesh = mesh;
 };
 
 Renderer.prototype.useTexture = function(texture) {
@@ -32,21 +34,20 @@ Renderer.prototype.useTexture = function(texture) {
     gl.uniform1i(this.currentMaterial.shader.uniforms.uSampler,
                  texture.texture);
   }
-  this.currentTexture = texture;
 };
 
 Renderer.prototype.useMaterial = function(material) {
-  if(this.currentMaterial === material) return;
-  this.useTexture(material.texture);
-  gl.useProgram(material.shader.program);
   this.currentMaterial = material;
+  gl.useProgram(material.shader.program);
+  this.setWorldMatrix(this.worldMatrix);
+  this.setModelMatrix(this.modelMatrix);
+  this.useTexture(material.texture);
 };
 
 Renderer.prototype.useModel = function (model) {
-  if(this.currentModel === model) return;
+  this.currentModel = model;
   this.useMaterial(model.material);
   this.useMesh(model.mesh);
-  this.currentModel = model;
 };
 
 Renderer.prototype.draw = function(){
@@ -54,9 +55,15 @@ Renderer.prototype.draw = function(){
 }
 
 Renderer.prototype.setWorldMatrix = function (m) {
-  gl.uniformMatrix4fv(this.currentMaterial.shader.uniforms.uPMatrix, false, m);
+  this.worldMatrix = m;
+  if(m && this.currentMaterial && this.currentMaterial.shader) {
+    gl.uniformMatrix4fv(this.currentMaterial.shader.uniforms.uPMatrix, false, m);
+  }
 };
 
 Renderer.prototype.setModelMatrix = function (m) {
-  gl.uniformMatrix4fv(this.currentMaterial.shader.uniforms.uMVMatrix, false, m);
+  this.modelMatrix = m;
+  if(m && this.currentMaterial && this.currentMaterial.shader) {
+    gl.uniformMatrix4fv(this.currentMaterial.shader.uniforms.uMVMatrix, false, m);
+  }
 };
